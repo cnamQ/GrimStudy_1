@@ -8,6 +8,9 @@
 #include "Study01Dlg.h"
 #include "afxdialogex.h"
 
+#include "CDlgNew.h"
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -65,6 +68,7 @@ BEGIN_MESSAGE_MAP(CStudy01Dlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_NEW, &CStudy01Dlg::OnBnClickedButtonNew)
 END_MESSAGE_MAP()
 
 
@@ -153,3 +157,12 @@ HCURSOR CStudy01Dlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CStudy01Dlg::OnBnClickedButtonNew()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CDlgNew Dlg;
+	Dlg.DoModal();
+
+}
