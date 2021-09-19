@@ -52,15 +52,10 @@ public:
 
 	CDlgImage* m_pDlgImage;
 	CDlgParameter* m_pDlgParameter;
+
+	int m_nThreshold = 0;
+
 	
-public:
-	afx_msg void OnBnClickedButtonNew();
-	afx_msg void OnBnClickedOk();
-	afx_msg void OnBnClickedButton2();
-	afx_msg void OnBnClickedButtonImage();
-	afx_msg void OnBnClickedButtonParameter();
-
-
 public:
 	void InitButton(CCtrlButtonST* pButton);
 	void InitLabel(CLabel* pLabel);
@@ -68,6 +63,20 @@ public:
 	void SetDlgView(int nMode);
 
 	void UpdateIni(BOOL bLoad);
-	
-	
+
+	void SetThresholdData(int nData) { m_nThreshold = nData; }
+	int GetThresholdData() { return m_nThreshold; }
+
+public:
+	afx_msg void OnBnClickedButtonNew();
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButtonImage();
+	afx_msg void OnBnClickedButtonParameter();
+	afx_msg void OnBnClickedButtonSave();
+	afx_msg void OnBnClickedButtonLoad();
+
+
+	afx_msg void OnBnClickedButtonBinariz();
+	afx_msg void OnBnClickedButtonCentroid();
 };

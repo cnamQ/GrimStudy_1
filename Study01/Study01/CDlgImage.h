@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "CDlgParameter.h"
 
 // CDialog 대화 상자
 
@@ -20,4 +21,16 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+
+public:
+	CImage m_ImgFile;
+
+
+public:
+	void DrawImage();
+	void Binarization(int nThreshold);
+	void Centroid();
+
+public:
+	afx_msg void OnPaint();
 };

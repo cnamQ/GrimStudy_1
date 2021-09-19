@@ -82,6 +82,10 @@ BEGIN_MESSAGE_MAP(CStudy01Dlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE, &CStudy01Dlg::OnBnClickedButtonImage)
 	ON_BN_CLICKED(IDC_BUTTON_PARAMETER, &CStudy01Dlg::OnBnClickedButtonParameter)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CStudy01Dlg::OnBnClickedButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_LOAD, &CStudy01Dlg::OnBnClickedButtonLoad)
+	ON_BN_CLICKED(IDC_BUTTON_BINARIZ, &CStudy01Dlg::OnBnClickedButtonBinariz)
+	ON_BN_CLICKED(IDC_BUTTON_CENTROID, &CStudy01Dlg::OnBnClickedButtonCentroid)
 END_MESSAGE_MAP()
 
 
@@ -236,12 +240,12 @@ void CStudy01Dlg::InitDialog()
 {
 	CRect cr(20, 50, 550, 350);
 
-	m_pDlgImage = new CDlgImage();
-	m_pDlgImage->Create(IDD_CDlgImage);		// Create Modeless 
+	m_pDlgImage = new CDlgImage(this);
+	m_pDlgImage->Create(IDD_CDlgImage, this);		// Create Modeless 
 	m_pDlgImage->MoveWindow(cr);
 
-	m_pDlgParameter = new CDlgParameter();
-	m_pDlgParameter->Create(IDD_CDlgParameter);		// Create Modeless 
+	m_pDlgParameter = new CDlgParameter(this);
+	m_pDlgParameter->Create(IDD_CDlgParameter, this);		// Create Modeless 
 	m_pDlgParameter->MoveWindow(cr);
 
 	SetDlgView(DLG_VIEW_IMAGE);
@@ -333,4 +337,72 @@ void CStudy01Dlg::OnBnClickedButtonParameter()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SetDlgView(DLG_VIEW_PARAMETER);
+}
+
+
+void CStudy01Dlg::OnBnClickedButtonSave()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	char strFilter[] = "BMP ONLY (*.BMP) | *.BMP;*.bmp | All Files(*.*)|*.*||";
+
+	CFileDialog fileDlg(TRUE, CString(".BMP"), NULL, 0, CString(strFilter));
+
+	if(fileDlg.DoModal() == IDOK)
+	{
+		m_pDlgImage->m_ImgFile.Save(fileDlg.GetPathName());
+	}
+}
+
+
+void CStudy01Dlg::OnBnClickedButtonLoad()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	
+
+
+	char strFilter[] = "BMP ONLY (*.BMP) | *.BMP;*.bmp | All Files(*.*)|*.*||";
+
+	CFileDialog fileDlg(TRUE, CString(".BMP"), NULL, 0, CString(strFilter));
+
+	if(fileDlg.DoModal() == IDOK)
+	{
+		// Img Info 존재여부 확인 후, 존재 시 제거
+		if(m_pDlgImage->m_ImgFile != NULL)
+		{
+			m_pDlgImage->m_ImgFile.Destroy();
+		}
+
+		HRESULT hr = m_pDlgImage->m_ImgFile.Load(fileDlg.GetPathName());
+
+		if(SUCCEEDED(hr))
+		{
+ 			m_pDlgParameter->ShowWindow(SW_HIDE);
+			m_pDlgImage->ShowWindow(SW_HIDE);
+			m_pDlgImage->ShowWindow(SW_SHOW);
+		}
+	}
+}
+
+
+void CStudy01Dlg::OnBnClickedButtonBinariz()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pDlgImage->Binarization(GetThresholdData());
+
+	m_pDlgParameter->ShowWindow(SW_HIDE);
+	m_pDlgImage->ShowWindow(SW_HIDE);
+	m_pDlgImage->ShowWindow(SW_SHOW);
+
+}
+
+
+void CStudy01Dlg::OnBnClickedButtonCentroid()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pDlgImage->Centroid();
+
+	m_pDlgParameter->ShowWindow(SW_HIDE);
+	m_pDlgImage->ShowWindow(SW_HIDE);
+	m_pDlgImage->ShowWindow(SW_SHOW);
 }
