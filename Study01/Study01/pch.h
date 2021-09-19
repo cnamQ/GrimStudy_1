@@ -12,3 +12,10 @@
 #include <afxcontrolbars.h>
 
 #endif //PCH_H
+#include <afxwin.h>
+#include <afxwin.h>
+
+using namespace std;
+
+#define DLG_VIEW_IMAGE 0x01
+#define DLG_VIEW_PARAMETER 0X02

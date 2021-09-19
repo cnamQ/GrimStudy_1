@@ -10,10 +10,14 @@
 
 #include "CDlgNew.h"
 
+#include <fstream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+#define COLOR_LABEL_BK RGB(100,0,0)
+#define COLOR_LABEL_TEXT RGB(255,255,255)
 
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
@@ -55,6 +59,7 @@ END_MESSAGE_MAP()
 
 CStudy01Dlg::CStudy01Dlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_STUDY01_DIALOG, pParent)
+	, m_dNum(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -62,6 +67,9 @@ CStudy01Dlg::CStudy01Dlg(CWnd* pParent /*=nullptr*/)
 void CStudy01Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_BUTTON_NEW, m_btnDlgNew);
+	DDX_Text(pDX, IDC_EDIT1, m_dNum);
+	DDX_Control(pDX, IDC_STATIC_01, m_lblNum);
 }
 
 BEGIN_MESSAGE_MAP(CStudy01Dlg, CDialogEx)
@@ -69,6 +77,11 @@ BEGIN_MESSAGE_MAP(CStudy01Dlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_NEW, &CStudy01Dlg::OnBnClickedButtonNew)
+	ON_BN_CLICKED(IDOK, &CStudy01Dlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_BUTTON2, &CStudy01Dlg::OnBnClickedButton2)
+	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE, &CStudy01Dlg::OnBnClickedButtonImage)
+	ON_BN_CLICKED(IDC_BUTTON_PARAMETER, &CStudy01Dlg::OnBnClickedButtonParameter)
 END_MESSAGE_MAP()
 
 
@@ -104,6 +117,18 @@ BOOL CStudy01Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+
+
+	//////////////////////////////////////////////////////////////////////////
+	//
+	InitButton(&m_btnDlgNew);
+	InitLabel(&m_lblNum);
+	InitDialog();
+
+
+	UpdateIni(true);
+
+	//////////////////////////////////////////////////////////////////////////
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -157,12 +182,155 @@ HCURSOR CStudy01Dlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CStudy01Dlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	if(m_pDlgImage)
+		delete m_pDlgImage;
+	if(m_pDlgParameter)
+		delete m_pDlgParameter;
+
+}
+
 
 
 void CStudy01Dlg::OnBnClickedButtonNew()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CDlgNew Dlg;
-	Dlg.DoModal();
+// 	CDlgNew Dlg;
+// 	Dlg.DoModal();
 
+	UpdateData(true);
+	m_lblNum.SetText(m_dNum);
+
+}
+
+void CStudy01Dlg::InitButton(CCtrlButtonST* pButton)
+{
+	CFont font;
+	font.CreatePointFont(12, _T("Consolas"));
+
+	pButton->SetFont(&font);
+	pButton->SetColor(CCtrlButtonST::BTNST_COLOR_BK_IN, COLOR_LABEL_BK);
+	pButton->SetColor(CCtrlButtonST::BTNST_COLOR_BK_OUT, COLOR_LABEL_BK);
+
+	pButton->SetColor(CCtrlButtonST::BTNST_COLOR_FG_IN, COLOR_LABEL_TEXT);
+	pButton->SetColor(CCtrlButtonST::BTNST_COLOR_FG_OUT, COLOR_LABEL_TEXT);
+
+}
+
+void CStudy01Dlg::InitLabel(CLabel* pLabel)
+{
+	pLabel->SetFontName(_T("Consolas"));
+	pLabel->SetFontSize(12);
+
+	pLabel->SetBkColor(COLOR_LABEL_BK);
+	pLabel->SetTextColor(COLOR_LABEL_TEXT);
+
+
+}
+
+void CStudy01Dlg::InitDialog()
+{
+	CRect cr(20, 50, 550, 350);
+
+	m_pDlgImage = new CDlgImage();
+	m_pDlgImage->Create(IDD_CDlgImage);		// Create Modeless 
+	m_pDlgImage->MoveWindow(cr);
+
+	m_pDlgParameter = new CDlgParameter();
+	m_pDlgParameter->Create(IDD_CDlgParameter);		// Create Modeless 
+	m_pDlgParameter->MoveWindow(cr);
+
+	SetDlgView(DLG_VIEW_IMAGE);
+
+
+}
+
+void CStudy01Dlg::SetDlgView(int nMode)
+{
+	if(nMode & DLG_VIEW_IMAGE)
+		m_pDlgImage->ShowWindow(SW_SHOW);
+	else
+		m_pDlgImage->ShowWindow(SW_HIDE);
+
+
+	if(nMode & DLG_VIEW_PARAMETER)
+		m_pDlgParameter->ShowWindow(SW_SHOW);
+	else
+		m_pDlgParameter->ShowWindow(SW_HIDE);
+
+
+
+}
+
+void CStudy01Dlg::UpdateIni(BOOL bLoad)
+{
+	CString fileName = CString("D://99_Code//cnamQ//GrimStudy_1//Study01//Study01//Glim.ini");
+	ifstream file(fileName);
+
+	if(!file.good())
+		bLoad = false;
+
+	CString str(fileName);
+	CString strSection(_T("Parameters"));
+	
+	CIni ini(str, strSection);
+
+	ini.SerGet(bLoad, m_dNum, _T("NUM"));
+
+	UpdateData(false);
+
+}
+
+
+
+void CStudy01Dlg::OnBnClickedOk()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	UpdateIni(false);
+
+	CDialogEx::OnOK();
+}
+
+
+void CStudy01Dlg::OnBnClickedButton2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	
+	/*
+	UpdateData(true)		컨트롤 -> 변수 값 전송
+	UpdateData(false)		변수 -> 컨트롤 값 전송
+	
+	UpdateData()는 컨트롤과 변수의 값이 변경되면 갱신시켜주는 함수.
+	꼭! DoDataExchange에 컨트롤과 변수가 연결된 상태여야 한다.
+	이전 방식으로는,,, GetDlgItem() & SetDlgItem 등을 써왔던 방식과 같다.
+	
+	UpdateData() 할때마다 DoDataExchange()가 호출된다.
+	*/
+
+	m_bTest = !m_bTest;
+
+	UpdateData(m_bTest);
+}
+
+
+
+
+void CStudy01Dlg::OnBnClickedButtonImage()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SetDlgView(DLG_VIEW_IMAGE);
+
+}
+
+
+void CStudy01Dlg::OnBnClickedButtonParameter()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SetDlgView(DLG_VIEW_PARAMETER);
 }

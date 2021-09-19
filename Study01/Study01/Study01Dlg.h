@@ -4,6 +4,13 @@
 
 #pragma once
 
+#include "CtrlButtonST.h"
+#include "Label.h"
+#include "ini.h" 
+
+#include "CDlgImage.h"
+#include "CDlgParameter.h"
+
 
 // CStudy01Dlg 대화 상자
 class CStudy01Dlg : public CDialogEx
@@ -30,10 +37,37 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+
+	afx_msg void OnDestroy();
+
 	DECLARE_MESSAGE_MAP()
 
 
+public:
+	bool m_bTest = false;
 
+	CCtrlButtonST m_btnDlgNew;
+	double m_dNum;
+	CLabel m_lblNum;
+
+	CDlgImage* m_pDlgImage;
+	CDlgParameter* m_pDlgParameter;
+	
 public:
 	afx_msg void OnBnClickedButtonNew();
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButtonImage();
+	afx_msg void OnBnClickedButtonParameter();
+
+
+public:
+	void InitButton(CCtrlButtonST* pButton);
+	void InitLabel(CLabel* pLabel);
+	void InitDialog();
+	void SetDlgView(int nMode);
+
+	void UpdateIni(BOOL bLoad);
+	
+	
 };
