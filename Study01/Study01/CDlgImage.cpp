@@ -44,26 +44,59 @@ void CDlgImage::OnPaint()
 	DrawImage();
 }
 
+
 void CDlgImage::DrawImage()
 {
+	// Image Data 출력 부분..
+
 	CStatic* staticSize = (CStatic*)GetDlgItem(IDC_STATIC_IMAGE);
 	CClientDC dc(staticSize);
 
-	CRect cr;
+	CRect cRect;
 
-	staticSize->GetClientRect(cr);
+	staticSize->GetClientRect(cRect);
 
 	if(m_ImgFile != NULL)
 	{
-		int nW = m_ImgFile.GetWidth();
-		int nH = m_ImgFile.GetHeight();
+		float fW = (float)m_ImgFile.GetWidth();
+		float fH = (float)m_ImgFile.GetHeight();
 
-		m_ImgFile.BitBlt(dc.m_hDC, 0, 0, nW, nH, 0, 0);
 
-		
+		float fRectW = cRect.right - cRect.left;
+		float fRectH = cRect.bottom - cRect.top;
+
+		float fRect_rate = fRectW / fRectH;
+		float fImg_rate = fW / fH;
+
+
+		// 비율 조정을 가로 중심인지,, 세로 중심인지,,
+		int nPrioity_range =
+			((fImg_rate > fRect_rate && fImg_rate < 1) || (fImg_rate < fRect_rate && fImg_rate >= 1)) ? 1 : 0;
+
+		if(nPrioity_range)
+			fRectW = fRectH * fImg_rate;
+		else
+			fRectH = fRectW / fImg_rate;
+
+
+		// size 재정의
+		cRect.left = 0;
+		cRect.right = (int)fRectW;
+		cRect.top = 0;
+		cRect.bottom = (int)fRectH;
+
+
+		dc.SetStretchBltMode(COLORONCOLOR);		// COLORONCOLOR : 원본 깨짐 방지
+		m_ImgFile.StretchBlt(dc.m_hDC, 0, 0, cRect.right, cRect.bottom);
+
+	//	m_ImgFile.BitBlt(dc.m_hDC, 0, 0, nW, nH, 0, 0);				// 메모리 DC -> 화면 DC로 비트맵 전송 func
+	//	m_ImgFile.StretchBlt(dc.m_hDC, 0, 0, cr.right, cr.bottom);	// DC size에 맞추어 Image Data 출력 (비율 깨짐)
+
+
 	}
 
 }
+
 
 void CDlgImage::Binarization(int nThreshold)
 {
