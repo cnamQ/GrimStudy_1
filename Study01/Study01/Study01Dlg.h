@@ -67,6 +67,8 @@ public:
 	void SetThresholdData(int nData) { m_nThreshold = nData; }
 	int GetThresholdData() { return m_nThreshold; }
 
+	void BranchTest();
+
 public:
 	afx_msg void OnBnClickedButtonNew();
 	afx_msg void OnBnClickedOk();

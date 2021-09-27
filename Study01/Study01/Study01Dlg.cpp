@@ -406,3 +406,9 @@ void CStudy01Dlg::OnBnClickedButtonCentroid()
 	m_pDlgImage->ShowWindow(SW_HIDE);
 	m_pDlgImage->ShowWindow(SW_SHOW);
 }
+
+void CStudy01Dlg::BranchTest()
+{
+
+	return;
+}
